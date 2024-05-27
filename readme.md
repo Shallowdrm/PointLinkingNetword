@@ -196,8 +196,8 @@ optimizer = torch.optim.RMSprop(
 
 然后计算该中心点与右上区域网格内角点的Pobj概率的计算，并过滤掉score < score_confident = 0.007的部分
 
-![image](https://github.com/Shallowdrm/PointLinkingNetword/tree/main/md_img/img.png)
-
+![image](https://github.com/Shallowdrm/PointLinkingNetword/blob/main/md_img/img.png)
+![Image text](https://github.com/Shallowdrm/PointLinkingNetword/blob/main/md_img/img.png)
 ```
         for p in range(2):
             # ij center || mn corner
