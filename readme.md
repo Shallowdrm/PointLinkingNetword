@@ -197,7 +197,7 @@ optimizer = torch.optim.RMSprop(
 然后计算该中心点与右上区域网格内角点的Pobj概率的计算，并过滤掉score < score_confident = 0.007的部分
 
 ![image](https://github.com/Shallowdrm/PointLinkingNetword/blob/main/md_img/img.png)
-![Image text](https://github.com/Shallowdrm/PointLinkingNetword/blob/main/md_img/img.png)
+
 ```
         for p in range(2):
             # ij center || mn corner
@@ -270,13 +270,13 @@ self.conv5 = BasicConv2d(1536, 204, kernel_size=3, stride=1, padding=1)
 img_root = "000012.jpg"
 ```
 
-![image-20240527213229584](https://github.com/Shallowdrm/PointLinkingNetword/tree/main/md_img/img_1.png)
+![image-20240527213229584](https://github.com/Shallowdrm/PointLinkingNetword/blob/main/md_img/img_1.png)
 
 ```
 img_root = "000007.jpg"
 ```
 
-![image-20240527213320924](https://github.com/Shallowdrm/PointLinkingNetword/tree/main/md_img/img_2.png)
+![image-20240527213320924](https://github.com/Shallowdrm/PointLinkingNetword/blob/main/md_img/img_2.png)
 
 目前因为训练轮次较低，我这里只能用batch_size=1进行训练，一轮大概半个小时左右，只能识别一些内容简单的图片，且准确率较低，可以看出目前已经可以预测一些右上角点和中心点，如果增加训练轮次的话效果应该会变好。
 
@@ -300,7 +300,7 @@ Two Stage
 
 我们将目标检测问题分为两个子问题：点检测问题和点链接问题。如图1所示，在我们的系统中有两种点，一个物体边界盒的中心点记为O，一个物体边界盒的一个角点，如CA。
 
-![image-20240507204201546](https://github.com/Shallowdrm/PointLinkingNetword/tree/main/md_img/img_3.png)
+![image-20240507204201546](https://github.com/Shallowdrm/PointLinkingNetword/blob/main/md_img/img_3.png)
 
 为了检测 点对，有两个任务，第一个任务是定位两个点，称为点检测，第二个任务是将这两个点关联起来，即属于同一对象的点，称为点链接。这是本文一般的目标检测思想，它是一种基于点的目标检测框架。与以往的边界盒回归方法相比，该新框架具有三个优点： 1)在任意尺度和任意高宽比下表示边界盒非常灵活。2)对于每个边界框，至少有四对点，可以通过投票来提高目标检测性能。3)它对遮挡具有自然的鲁棒性，因为它可以使用局部线索来推断物体的位置。
 
@@ -314,7 +314,7 @@ Two Stage
 
 该检测网络基于初始空间v2。我们使用初始空间-v2和一些额外的卷积层来回归点的参数，然后解析参数，得到对象的边界框和类别标签。最后，我们将四个分支（左上、右上、左机器人、右机器人）的盒子合并，应用NMS得到最终的目标检测结果。
 
-![image-20240507210002469](https://github.com/Shallowdrm/PointLinkingNetword/tree/main/md_img/img_4.png)
+![image-20240507210002469](https://github.com/Shallowdrm/PointLinkingNetword/blob/main/md_img/img_4.png)
 
 在单次拍摄目标探测器[25,27]的设置之后，我们将输入图像I的大小调整为具有相同高度和宽度的固定大小。1 PLN的基础网络是初始空间-v2，根据谷歌[17]提出的调查论文，这是一个快速、准确的目标检测网络。使用初始空间-v2生成的I的卷积特征图，记为F，具有S×S的空间维度。然后，我们将I划分为S×S网格单元，如图1所示。因此，I中的一个网格单元与F中的一个网格单元相关联。对于i∈[1，···，S2 ]，Ii表示图像中的第i个网格单元，Fi表示F中的第i个网格单元。
 
@@ -332,11 +332,11 @@ Two Stage
 
 一个网格单元格是否包含一种点的类型，它们使用✶pt ij和✶nopt ij来表示。里面的点是一个中心点或一个角点并不重要。如果用i和j索引的单元格网格包含该点，则✶选择ij = 1和✶选择ij = 0；否则，✶选择ij = 0和✶选择ij = 1。
 
-![image-20240507205843309](https://github.com/Shallowdrm/PointLinkingNetword/tree/main/md_img/img_5.png)
+![image-20240507205843309](https://github.com/Shallowdrm/PointLinkingNetword/blob/main/md_img/img_5.png)
 
 然后，如果网格单元包含一个点，则网格单元需要预测其存在性、类分布概率、精确位置和链接点。
 
-![image-20240507210016003](https://github.com/Shallowdrm/PointLinkingNetword/tree/main/md_img/img_6.png)
+![image-20240507210016003](https://github.com/Shallowdrm/PointLinkingNetword/blob/main/md_img/img_6.png)
 
 基本上，我们最小化点的存在性、分类分数、x偏移、y偏移和连接点的粗糙位置的最小二乘误差
 
@@ -344,7 +344,7 @@ wclass、wcoord和wlink分别是点存在性、精确位置和粗糙位置的权
 
 同时，给出了一个内部无点的网格的损失函数如下
 
-![image-20240508155359664](https://github.com/Shallowdrm/PointLinkingNetword/tree/main/md_img/img_7.png)
+![image-20240508155359664](https://github.com/Shallowdrm/PointLinkingNetword/blob/main/md_img/img_7.png)
 
 它是对所有网格单元格和所有类型的点的总和。请注意，在建议的损失中，我们只是简单地使用**欧几里得损失**来回归预测。根据我们的经验，我们发现PLN中的欧几里得损失是稳健的，没有必要为不同类型的预测设计不同的损失函数。
 
@@ -352,7 +352,7 @@ wclass、wcoord和wlink分别是点存在性、精确位置和粗糙位置的权
 
 对于用（i、j）和（s，t）进行索引的一对点，点对成为第n类的对象的概率由
 
-![image-20240508155601972](https://github.com/Shallowdrm/PointLinkingNetword/tree/main/md_img/img.png)
+![image-20240508155601972](https://github.com/Shallowdrm/PointLinkingNetword/blob/main/md_img/img.png)
 
 其中，我们将空间索引（i、s）分别分解为它的x分量和y分量。ix、iy、sx和sy都在[1、S]的范围内。回想一下，我们有一个硬约束，即一个链路只能存在于一对中心点和角点之间，记为|j−t| = B)。因此，L（sx）x ijL（sy）y ij表示与（s、t）相连的概率点（i、j），L（ix）x stL（iy）y st表示与（i、j）相连的概率点（s、t）。
 
